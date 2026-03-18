@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test FullCalendar</title>
+</head>
+<body>
+    <div id="calendar" style="max-width:900px;margin:2rem auto;"></div>
+    <script src="/fullcalendar.min.js"></script>
+    <script>
+        var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+            initialView: 'timeGridDay'
+        });
+        calendar.render();
+    </script>
+</body>
+</html>

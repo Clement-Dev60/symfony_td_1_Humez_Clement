@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Repository\EventRepository;
 use App\Repository\NewsRepository;
+use App\Repository\PromoRepository;
 use App\Service\RssService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,15 +15,13 @@ final class HomeController extends AbstractController
     public function index(
         EventRepository $eventRepository,
         NewsRepository $newsRepository,
+        PromoRepository $promoRepository,
         RssService $rssService,
     ): Response {
         $events = $eventRepository->findAll();
         $newsList = $newsRepository->findBy(["active" => true]);
-        $rssItems = $rssService->fetch(
-            "https://www.agglo-compiegne.fr/rss/actualites",
-        );
+        $rssItems = $rssService->fetch("https://www.agglo-compiegne.fr/rss/actualites");
 
-        // Group events by promo then by day
         $schedule = [];
         foreach ($events as $event) {
             $promoName = $event->getPromo()->getName();
@@ -34,6 +33,7 @@ final class HomeController extends AbstractController
             "schedule" => $schedule,
             "newsList" => $newsList,
             "rssItems" => $rssItems,
+            "promos"   => $promoRepository->findAll(),
         ]);
     }
 }

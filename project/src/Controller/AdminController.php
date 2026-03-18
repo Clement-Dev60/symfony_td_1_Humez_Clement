@@ -21,7 +21,9 @@ class AdminController extends AbstractController
     public function home(Request $request, EntityManagerInterface $em): Response
     {
         $news = new News();
-        $newsForm = $this->createForm(NewsFormType::class, $news);
+        $newsForm = $this->createForm(NewsFormType::class, $news, [
+            'csrf_token_id' => 'news_form',
+        ]);
         $newsForm->handleRequest($request);
         if ($newsForm->isSubmitted() && $newsForm->isValid()) {
             $em->persist($news);
@@ -31,7 +33,9 @@ class AdminController extends AbstractController
         }
 
         $event = new Event();
-        $eventForm = $this->createForm(EventFormType::class, $event);
+        $eventForm = $this->createForm(EventFormType::class, $event, [
+            'csrf_token_id' => 'event_form',
+        ]);
         $eventForm->handleRequest($request);
         if ($eventForm->isSubmitted() && $eventForm->isValid()) {
             $em->persist($event);
@@ -41,7 +45,9 @@ class AdminController extends AbstractController
         }
 
         $promo = new Promo();
-        $promoForm = $this->createForm(PromoFormType::class, $promo);
+        $promoForm = $this->createForm(PromoFormType::class, $promo, [
+            'csrf_token_id' => 'promo_form',
+        ]);
         $promoForm->handleRequest($request);
         if ($promoForm->isSubmitted() && $promoForm->isValid()) {
             $em->persist($promo);

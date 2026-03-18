@@ -1,27 +1,27 @@
+{# templates/admin/forms.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {% if app.user %}
-        {% include 'layouts/nav.html.twig' %}
-    {% endif %}
-
-
     {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
+        <div style="background: rgba(99,102,241,0.2); border: 1px solid var(--primary); border-radius: 12px; padding: 12px 20px; margin-bottom: 1rem;">
+            ✅ {{ message }}
+        </div>
     {% endfor %}
 
-    <h1>Créer une promo</h1>
-    {% include 'promo/new.html.twig' with { form: promoForm } %}
-    <a href="{{ path('promo_list') }}">Voir les promos</a>
-    <hr>
+    <h1>Administration</h1>
 
-    <h1>Créer une news</h1>
-    {% include 'news/new.html.twig' with { form: newsForm } %}
-    <a href="{{ path('news_list') }}">Voir les news</a>
-    <hr>
-
-    <h1>Créer un événement</h1>
-    {% include 'event/new.html.twig' with { form: eventForm } %}
-    <a href="{{ path('event_list') }}">Voir les events</a>
-
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="glass-card">
+            <h3>Nouvelle Promo</h3>
+            {% include 'promo/new.html.twig' with { form: promoForm } %}
+        </div>
+        <div class="glass-card">
+            <h3>Nouvelle News</h3>
+            {% include 'news/new.html.twig' with { form: newsForm } %}
+        </div>
+        <div class="glass-card" style="grid-column: span 2;">
+            <h3>Nouvel Événement</h3>
+            {% include 'event/new.html.twig' with { form: eventForm } %}
+        </div>
+    </div>
 {% endblock %}

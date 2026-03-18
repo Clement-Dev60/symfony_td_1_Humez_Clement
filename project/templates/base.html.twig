@@ -1,24 +1,93 @@
+{# templates/base.html.twig #}
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}School Board{% endblock %}</title>
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
         {% block stylesheets %}
         <style>
-            * {
+            :root {
+                --primary: #6366f1;
+                --accent: #f43f5e;
+                --bg: #0f172a;
+                --card: rgba(30, 41, 59, 0.7);
+                --border: rgba(255, 255, 255, 0.1);
+                --text: #f8fafc;
+            }
+            body {
+                background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #0f172a 100%);
+                color: var(--text);
+                font-family: 'Inter', sans-serif;
                 margin: 0;
-                padding: 0;
+                min-height: 100vh;
+                padding-top: 80px; 
+            }
+            .container { 
+                max-width: 1200px; 
+                margin: 0 auto; 
+                padding: 2rem 1.5rem; 
+            }
+            .glass-card {
+                background: var(--card);
+                backdrop-filter: blur(12px);
+                border: 1px solid var(--border);
+                border-radius: 24px;
+                padding: 2rem;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                margin-bottom: 20px;
+            }
+            h1 { font-weight: 800; font-size: 2.5rem; letter-spacing: -0.05em; margin-bottom: 2rem; }
+            h2 { font-weight: 600; font-size: 1.5rem; margin-top: 0; }
+            input, textarea, select {
+                width: 100%; 
+                background: rgba(255,255,255,0.05); 
+                border: 1px solid var(--border);
+                padding: 12px; 
+                border-radius: 12px; 
+                color: white; 
+                margin-bottom: 1rem;
                 box-sizing: border-box;
+            }
+            .btn {
+                background: var(--primary); 
+                color: white; 
+                border: none; 
+                padding: 12px 24px;
+                border-radius: 12px; 
+                font-weight: 600; 
+                cursor: pointer; 
+                transition: 0.3s;
+                text-decoration: none; 
+                display: inline-block;
+                text-align: center;
+            }
+            .btn:hover { 
+                opacity: 0.9; 
+                transform: translateY(-2px);
+                box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+            }
+            .badge {
+                background: var(--primary);
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: bold;
             }
         </style>
         {% endblock %}
-
+    </head>
+    <body>
+        {% include 'layouts/nav.html.twig' %}
+        <main class="container">
+            {% block body %}{% endblock %}
+        </main>
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
     </body>
 </html>

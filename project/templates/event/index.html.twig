@@ -1,43 +1,50 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {% if app.user %}
-        {% include 'layouts/nav.html.twig' %}
-    {% endif %}
+    <div class="container">
+    <h1>Calendrier des Événements</h1>
 
-    <h1>Liste des event</h1>
+    <div class="glass-card" style="grid-column: span 12;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <p style="color: var(--subtext);">Consultez les sessions à venir pour chaque promo.</p>
+            <a href="{{ path('admin') }}" class="btn">Ajouter un event</a>
+        </div>
 
-    <a href="{{ path('admin') }}">Créer un event</a>
-
-    {% if eventList is empty %}
-        <p>Aucun event pour le moment.</p>
-    {% else %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Titre</th>
-                    <th>Description</th>
-                    <th>Date de début</th>
-                    <th>Date de fin</th>
-                    <th>Salle de classe</th>
-                    <th>Intervenant</th>
-                    <th>Promo</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event in eventList %}
-                    <tr>
-                        <td>{{ event.title }}</td>
-                        <td>{{ event.description }}</td>
-                        <td>{{ event.startDate|date('d/m/Y') }}</td>
-                        <td>{{ event.endDate ? event.endDate|date('d/m/Y') : '-' }}</td>
-                        <td>{{ event.room}}</td>
-                        <td>{{ event.speaker}}</td>
-                        <td>{{ event.promo.name }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-
+        {% if eventList is empty %}
+            <div style="text-align: center; padding: 3rem;">
+                <p>Aucun événement n'est programmé pour le moment.</p>
+            </div>
+        {% else %}
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Promo</th>
+                            <th>Date</th>
+                            <th>Salle</th>
+                            <th>Intervenant</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in eventList %}
+                            <tr>
+                                <td style="font-weight: 600;">{{ event.title }}</td>
+                                <td><span class="badge">{{ event.promo.name }}</span></td>
+                                <td>
+                                    {{ event.startDate|date('d/m/Y') }}
+                                    {% if event.endDate %}
+                                        <small style="display: block; opacity: 0.6;">au {{ event.endDate|date('d/m/Y') }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ event.room }}</td>
+                                <td>{{ event.speaker }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

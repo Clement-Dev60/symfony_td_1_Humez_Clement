@@ -1,62 +1,168 @@
 {% extends 'base.html.twig' %}
-{% block title %}Home{% endblock %}
+
+{% block importmap %}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .promo-section { margin-bottom: 3rem; }
+        .calendars-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-    {% if app.user %}
-        {% include 'layouts/nav.html.twig' %}
-    {% endif %}
-    {% if not app.user %}
-        <a class='home-btn' href="{{ path('app_login') }}">Se connecter</a>
-        <a class='home-btn' href="{{ path('app_register') }}">Créer un compte</a>
-    {% endif %}
 
-    <h1>Events</h1>
-    {% for promo, days in schedule %}
-        <h2>Promo : {{ promo }}</h2>
-        <div>
-            {% for day, events in days %}
-                <div>
-                    <h3>{{ day|date('d/m/Y') }}</h3>
-                    {% for event in events %}
-                        <div>
-                            <strong>
-                                {{ event.startDate|date('H:i') }}
-                                -
-                                {{ event.endDate ? event.endDate|date('H:i') : '?' }}
-                            </strong><br>
-                            {{ event.title }}<br>
-                            Room: {{ event.room }}<br>
-                            Speaker: {{ event.speaker }}
-                        </div>
+    <div class="container">
+        <h1>Bonjour, {{ app.user ? app.user.userIdentifier : 'visiteur' }}</h1>
+        <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px;">
+
+            {# Section Événements - Large (8 colonnes) #}
+            <section class="glass-card" style="grid-column: span 8;">
+                <h2>📅 Événements</h2>
+                {% for promo, days in schedule %}
+                    <div class="promo-block" style="margin-bottom: 2rem;">
+                        <span class="badge" style="background: var(--primary); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem;">{{ promo }}</span>
+                        {% for day, events in days %}
+                            <div class="day-group" style="margin-top: 15px; border-left: 2px solid var(--border); padding-left: 15px;">
+                                <small style="color: var(--primary); font-weight: bold;">{{ day|date('d/m') }}</small>
+                                {% for event in events %}
+                                    <div class="event-mini-card" style="margin-top: 8px; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
+                                        <strong>{{ event.title }}</strong>
+                                        <span style="opacity: 0.6; font-size: 0.8rem; float: right;">Salle {{ event.room }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="opacity: 0.5;">Aucun événement prévu.</p>
+                {% endfor %}
+            </section>
+
+            {# Colonne de droite (4 colonnes) #}
+            <div style="grid-column: span 4; display: flex; flex-direction: column; gap: 20px;">
+
+                {# Section News #}
+                <section class="glass-card">
+                    <h2>📰 News</h2>
+                    {% for news in newsList %}
+                        <article class="news-preview" style="margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 5px;">{{ news.title }}</h3>
+                            <p style="font-size: 0.9rem; opacity: 0.8; margin: 0;">{{ news.content|slice(0, 50) }}...</p>
+                        </article>
+                    {% else %}
+                        <p style="opacity: 0.5;">Aucune news.</p>
                     {% endfor %}
+                </section>
+
+                {# Flux RSS #}
+                <section class="glass-card">
+                    <h2 style="color: #f97316;">🧡 Flux RSS</h2>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        {% for item in rssItems|slice(0, 5) %}
+                            <article style="font-size: 0.85rem;">
+                                <small style="opacity: 0.5;">{{ item.date }}</small>
+                                <h4 style="margin: 5px 0;">
+                                    <a href="{{ item.lien }}" target="_blank" style="color: var(--text); text-decoration: none;">
+                                        {{ item.titre }}
+                                    </a>
+                                </h4>
+                            </article>
+                        {% else %}
+                            <p style="opacity: 0.5;">Flux indisponible.</p>
+                        {% endfor %}
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+        {# Calendriers #}
+        <h2 style="margin-top: 2rem;">🗓️ Calendriers des promos</h2>
+        {% for promo in promos %}
+            <div class="promo-section">
+                <h3>Promo : {{ promo.name }}</h3>
+                <div class="calendars-row">
+                    <div>
+                        <h4>Aujourd'hui</h4>
+                        <div id="cal-{{ promo.id }}-today" style="min-height:500px;"></div>
+                    </div>
+                    <div>
+                        <h4>Demain</h4>
+                        <div id="cal-{{ promo.id }}-tomorrow" style="min-height:500px;"></div>
+                    </div>
                 </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>No events yet.</p>
-    {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
 
-    <h1>News</h1>
-    {% for news in newsList %}
-        <div>
-            <h3>{{ news.title }}</h3>
-            <p>{{ news.content }}</p>
-            {% if news.source %}
-                <a href="{{ news.source }}" target="_blank">See source</a>
-            {% endif %}
-        </div>
-    {% else %}
-        <p>No news yet.</p>
-    {% endfor %}
+    <script src="{{ asset('fullcalendar.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendars = [
+                {% for promo in promos %}
+                {
+                    todayEl: "cal-{{ promo.id }}-today",
+                    tomorrowEl: "cal-{{ promo.id }}-tomorrow",
+                    url: "{{ path('api_events', {promoId: promo.id}) }}",
+                },
+                {% endfor %}
+            ];
 
-    <h1>RSS Feed</h1>
-    {% for item in rssItems %}
-        <div>
-            <h3>{{ item.titre }}</h3>
-            <p>{{ item.description }}</p>
-            <a href="{{ item.lien }}" target="_blank">See source</a>
-            <small>{{ item.date }}</small>
-        </div>
-    {% else %}
-        <p>No articles available.</p>
-    {% endfor %}
+            function formatDate(date) {
+                var y = date.getFullYear();
+                var m = String(date.getMonth() + 1).padStart(2, '0');
+                var d = String(date.getDate()).padStart(2, '0');
+                return y + '-' + m + '-' + d;
+            }
+
+            calendars.forEach(function(cal) {
+                var today = new Date();
+                var tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                var dayAfter = new Date();
+                dayAfter.setDate(dayAfter.getDate() + 2);
+
+                var days = [
+                    { el: cal.todayEl, date: formatDate(today), end: formatDate(tomorrow) },
+                    { el: cal.tomorrowEl, date: formatDate(tomorrow), end: formatDate(dayAfter) }
+                ];
+
+                days.forEach(function(d) {
+                    new FullCalendar.Calendar(
+                        document.getElementById(d.el),
+                        {
+                            initialView: 'timeGridDay',
+                            initialDate: d.date,
+                            locale: 'fr',
+                            timeZone: 'Europe/Paris',
+                            height: 'auto',
+                            slotMinTime: '08:00',
+                            slotMaxTime: '17:00',
+                            expandRows: true,
+                            headerToolbar: { left: '', center: 'title', right: '' },
+                            events: cal.url + '&start=' + d.date + '&end=' + d.end,
+                            eventContent: function(info) {
+                                return {
+                                    html: '<div style="padding:2px;font-size:0.85em;">' +
+                                        '<strong>' + info.event.title + '</strong><br>' +
+                                        '📍 ' + info.event.extendedProps.room + '<br>' +
+                                        '🎤 ' + info.event.extendedProps.speaker +
+                                        '</div>'
+                                };
+                            },
+                            eventClick: function(info) {
+                                alert('Salle : ' + info.event.extendedProps.room + ' - Intervenant : ' + info.event.extendedProps.speaker);
+                            }
+                        }
+                    ).render();
+                });
+            });
+        });
+    </script>
+
 {% endblock %}

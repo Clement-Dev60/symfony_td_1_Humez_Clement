@@ -1,47 +1,38 @@
-    {{ form_start(form) }}
-
-        <div>
-            {{ form_label(form.promo) }}
-            {{ form_widget(form.promo) }}
-            {{ form_errors(form.promo) }}
-        </div>
-
-        <div>
-            {{ form_label(form.title) }}
-            {{ form_widget(form.title) }}
-            {{ form_errors(form.title) }}
-        </div>
-
-        <div>
-            {{ form_label(form.description) }}
-            {{ form_widget(form.description) }}
-            {{ form_errors(form.description) }}
-        </div>
-
-        <div>
-            {{ form_label(form.startDate) }}
-            {{ form_widget(form.startDate) }}
-            {{ form_errors(form.startDate) }}
-        </div>
-
-        <div>
-            {{ form_label(form.endDate) }}
-            {{ form_widget(form.endDate) }}
-            {{ form_errors(form.endDate) }}
-        </div>
-
-        <div>
-            {{ form_label(form.room) }}
-            {{ form_widget(form.room) }}
-            {{ form_errors(form.room) }}
-        </div>
-
-        <div>
-            {{ form_label(form.speaker) }}
-            {{ form_widget(form.speaker) }}
-            {{ form_errors(form.speaker) }}
-        </div>
-
-        <button type="submit">Créer l'événement</button>
-
-    {{ form_end(form) }}
+{{ form_start(form) }}
+    <div>
+        {{ form_label(form.promo) }}
+        {{ form_widget(form.promo) }}
+        {{ form_errors(form.promo) }}
+    </div>
+    <div>
+        {{ form_label(form.title) }}
+        {{ form_widget(form.title) }}
+        {{ form_errors(form.title) }}
+    </div>
+    <div>
+        {{ form_label(form.description) }}
+        {{ form_widget(form.description) }}
+        {{ form_errors(form.description) }}
+    </div>
+    <div>
+        {{ form_label(form.startDate) }}
+        {{ form_widget(form.startDate) }}
+        {{ form_errors(form.startDate) }}
+    </div>
+    <div>
+        {{ form_label(form.endDate) }}
+        {{ form_widget(form.endDate) }}
+        {{ form_errors(form.endDate) }}
+    </div>
+    <div>
+        {{ form_label(form.room) }}
+        {{ form_widget(form.room) }}
+        {{ form_errors(form.room) }}
+    </div>
+    <div>
+        {{ form_label(form.speaker) }}
+        {{ form_widget(form.speaker) }}
+        {{ form_errors(form.speaker) }}
+    </div>
+    <button type="submit">Créer l'événement</button>
+{{ form_end(form) }}

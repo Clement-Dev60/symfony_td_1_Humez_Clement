@@ -24,7 +24,7 @@ class EventFormType extends AbstractType
             ->add("speaker")
             ->add("promo", EntityType::class, [
                 "class" => Promo::class,
-                "choice_label" => "id",
+                "choice_label" => "name",
             ]);
     }
 

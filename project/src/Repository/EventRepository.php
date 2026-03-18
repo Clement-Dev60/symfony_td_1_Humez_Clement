@@ -16,6 +16,19 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
+    public function findByPeriodAndPromoId(\DateTime $start, \DateTime $end, int $promoId): array
+    {
+        return $this->createQueryBuilder('e')
+            ->join('e.promo', 'p')
+            ->where('e.startDate BETWEEN :start AND :end')
+            ->andWhere('p.id = :promoId')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->setParameter('promoId', $promoId)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Event[] Returns an array of Event objects
     //     */
